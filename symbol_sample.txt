@@ -1,0 +1,27 @@
+On Symbol rates and sample rates
+
+
+
+Per the Modulation Toolkit help:
+samples per symbol specifies the number of samples dedicated to each symbol. Multiply this value by the symbol rate to determine the sample rate.
+
+This parameter only affects digital modulation schemes (i.e. schemes modulating digital information - bits) and not analog schemes (AM, FM, or PM). This is because only dig mod schemes have bits, which are grouped together to form symbols.
+
+From an acquisition/demodulation standpoint, the purpose of having this parameter is to end up with an array of samples with an integer number of samples per symbol, or equivalently, to have a sample rate that is an integer multiple of the symbol rate. 
+If my symbol rate is 100 kSym/sec, then I want my data sample rate to be 100, 200, 300, 400, etc... kSamp/sec.
+
+This is because the process involved in digital demodulation involves selecting the samples out of the waveform that are the actual symbols, so that these samples (which are actually the symbols) can be mapped back to the bit pattern defined in the symbol map. 
+If I have a sample rate that is a non-integer multiple of the symbol rate, then I will not always have a sample at the actual timing moments of the symbol rate or clock. 
+This is why the digital demodulation examples all call a resample function just prior to the digital demod routine, so that the resampler can resample the data from the rate acquired with the HW to a rate that is equal to the symbol rate times number of symbols. 
+
+From a generation/modulation standpoint, this controls how many samples I use to define each symbol, the minimum being one. However, using 1 sample/symbol results in very poor quality representation of the eventual IQ data and does not provide as much data for pulse shaping 
+filters to work with. The more samples/symbol, the more data the filters have to work with, but this can also bring diminishing returns since the pulse shaping will take longer with more data. The default value in Modulation Toolkit  is 16 but 8 usually works well enough. 
+
+
+
+
+From:
+
+https://forums.ni.com/t5/RF-Measurement-Devices/Modulation-Toolkit-Samples-per-Symbol/td-p/426349
+
+
